@@ -139,7 +139,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
                                 edgecolor=color, facecolor='none')
             ax.add_patch(p)
             # Added line to print coordinates of boxes
-            measures[class_names[class_ids[i]]] = [x2 - x1, y2 - y1]
+            measures[class_names[class_ids[i]]] = [x1, y1, x2 - x1, y2 - y1]
             print(class_names[class_ids[i]], "\t\t\t\t", (x1, y1), "\t", x2 - x1, "\t", y2 - y1 )
         
         # Label
@@ -173,7 +173,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
     ax.imshow(masked_image.astype(np.uint8))
     if auto_show:
         plt.show()
-    return measures
+    return measures, masked_image
 
 
 def display_differences(image,
