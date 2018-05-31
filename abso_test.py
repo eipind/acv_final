@@ -4,7 +4,6 @@ import sys
 from abso_shanked import *
 import matplotlib.pyplot as plt
 
-
 # [0] : base
 # [1] : top
 # [2] : height
@@ -15,6 +14,8 @@ drawing = False
 c_line = None
 cid1, cid2, cid3 = None, None, None
 
+mouse_counter = 0
+
 
 def plot_init(plt, image):
     args = [plt, image]
@@ -24,7 +25,7 @@ def plot_init(plt, image):
 
     global cid1, cid2, cid3
 
-    cid1 = fig.canvas.mpl_connect('key_press_event', lambda event: key_press(event, args))
+    cid1 = fig.canvas.mpl_connect('button_release_event', lambda event: key_press(event, args))
     cid2 = fig.canvas.mpl_connect('button_press_event', lambda event: mouse_ldown(event, args))
     cid3 = fig.canvas.mpl_connect('motion_notify_event', lambda event: mouse_motion(event, args))
     plt.show()
@@ -60,26 +61,29 @@ def mouse_motion(event, args):
 
 def key_press(event, args):
     sys.stdout.flush()
-    key = event.key
+    #key = event.key
 
     global iter_
+    global mouse_counter
 
+    mouse_counter = mouse_counter + 1
     plt = args[0]
     image = args[1]
 
-    if key == "r":
-        # reset whole thing
-        print("\"" + str(event.key).upper() + "\" was pressed. Process for this image has been reset.")
-        print("")
-        plt.close()
-        plot_init(plt, image)
-        iter_ = 0
-    elif key == "n":
-        # for moving on to the next stage
+    # if key == "r":
+    #     # reset whole thing
+    #     print("\"" + str(event.key).upper() + "\" was pressed. Process for this image has been reset.")
+    #     print("")
+    #     plt.close()
+    #     plot_init(plt, image)
+    #     iter_ = 0
+    #key == "n":
+    # for moving on to the next stage
+    if mouse_counter == 2:
         global ref_objs, unknown_obj
         print("Reference objects:", str(ref_objs))
         print("Unknown object:", str(unknown_obj))
-        print("\"" + str(event.key).upper() + "\" was pressed. Moving on to the next stage.")
+        print("\"" + str(event.key).upper() + "\" was pressed. Moving onr to the next stage.")
         if iter_ < 1:
             iter_ += 1
         else:
@@ -87,6 +91,7 @@ def key_press(event, args):
             plt.gcf().canvas.mpl_disconnect(cid3)
             global vanishing_line, vanishing_point
             compute(ref_objs, unknown_obj, vanishing_point, vanishing_line)
+        mouse_counter = 0
 
 
 def compute(refs, unknown, vp, vl):
