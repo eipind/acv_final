@@ -95,14 +95,21 @@ def key_press(event, args):
         mouse_counter = 0
 
 
+def get_alpha(refs, unknown, vp, vl):
+    
+    pass
+
+
 def compute(refs, unknown, vp, vl):
     import eqs as eq
-    vl_ = vl[0][0] - vl[1][0], vl[0][1] - vl[1][1]
+    # vl_ = vl[0][0] - vl[1][0], vl[0][1] - vl[1][1]
     # vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
-    #if vl[0][0]>vl[1][0]:
-        #vl_ = vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
-    #else:
-        #vl_ = np.cross(np.array(vl[1]), np.array(vl[0]).T)
+    if vl[0][0]>vl[1][0]:
+        vl_ = vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
+    else:
+        vl_ = np.cross(np.array(vl[1]), np.array(vl[0]).T)
+
+    get_alpha(refs, unknown, vp, vl)
     print("VL:", vl)
     print("VL_:", vl_)
     alpha_vals = []
