@@ -1,8 +1,9 @@
 import os
 import cv2
 import sys
-from abso_shanked import *
+import abso_shanked
 import matplotlib.pyplot as plt
+import numpy as np
 
 # [0] : base
 # [1] : top
@@ -97,6 +98,11 @@ def key_press(event, args):
 def compute(refs, unknown, vp, vl):
     import eqs as eq
     vl_ = vl[0][0] - vl[1][0], vl[0][1] - vl[1][1]
+    # vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
+    #if vl[0][0]>vl[1][0]:
+        #vl_ = vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
+    #else:
+        #vl_ = np.cross(np.array(vl[1]), np.array(vl[0]).T)
     print("VL:", vl)
     print("VL_:", vl_)
     alpha_vals = []
@@ -105,7 +111,7 @@ def compute(refs, unknown, vp, vl):
         base = ref[0]
         top = ref[1]
         height = ref[2]
-        alpha_vals.append(eq.alpha_eq(np.array(base), np.array(top), np.array(vl_), np.array(vp), height))
+        alpha_vals.append(eq.alpha_eq(np.array(base), np.array(top), vl_, np.array(vp), height))
 
     print("Alpha vals:", alpha_vals)
     avg_alpha_val = sum(alpha_vals) / float(len(alpha_vals))
@@ -113,7 +119,7 @@ def compute(refs, unknown, vp, vl):
     base = unknown[0]
     top = unknown[1]
     # (b, t, l, v, a)
-    estimated_height = eq.z_eq(np.array(base), np.array(top), np.array(vl_), np.array(vp), avg_alpha_val)
+    estimated_height = eq.z_eq(np.array(base), np.array(top), vl_, np.array(vp), avg_alpha_val)
     print("Estimated height:", estimated_height)
 
 
@@ -219,25 +225,25 @@ for subdir, dirs, files in os.walk('./imgs'):
             print(filepath)
             image = cv2.imread(filepath)
 
-            edgelets1 = compute_edgelets(image)
+            edgelets1 = abso_shanked.compute_edgelets(image)
             # vis_edgelets(image, edgelets1)
-            vp1 = ransac_vanishing_point(edgelets1, num_ransac_iter=5000,
+            vp1 = abso_shanked.ransac_vanishing_point(edgelets1, num_ransac_iter=5000,
                                          threshold_inlier=5)
-            vp1 = reestimate_model(vp1, edgelets1, threshold_reestimate=5)
-            vis_model(image, vp1)
+            vp1 = abso_shanked.reestimate_model(vp1, edgelets1, threshold_reestimate=5)
+            abso_shanked.vis_model(image, vp1)
 
-            edgelets2 = remove_inliers(vp1, edgelets1, 10)
-            vp2 = ransac_vanishing_point(edgelets2, num_ransac_iter=5000,
+            edgelets2 = abso_shanked.remove_inliers(vp1, edgelets1, 10)
+            vp2 = abso_shanked.ransac_vanishing_point(edgelets2, num_ransac_iter=5000,
                                          threshold_inlier=5)
-            vp2 = reestimate_model(vp2, edgelets2, threshold_reestimate=5)
-
-            # vis_model(image, vp2)
+            vp2 = abso_shanked.reestimate_model(vp2, edgelets2, threshold_reestimate=5)
 
             # vis_model(image, vp2)
-            edgelets3 = remove_inliers(vp2, edgelets2, 10)
-            vp3 = ransac_vanishing_point(edgelets3, num_ransac_iter=5000,
+
+            # vis_model(image, vp2)
+            edgelets3 = abso_shanked.remove_inliers(vp2, edgelets2, 10)
+            vp3 = abso_shanked.ransac_vanishing_point(edgelets3, num_ransac_iter=5000,
                                          threshold_inlier=5)
-            vp3 = reestimate_model(vp3, edgelets3, threshold_reestimate=5)
+            vp3 = abso_shanked.reestimate_model(vp3, edgelets3, threshold_reestimate=5)
 
             vp, vl = get_vp_and_vl([vp1, vp2, vp3])
 

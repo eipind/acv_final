@@ -2,6 +2,7 @@ import cv2
 import numpy
 import tensorflow
 import math
+from numpy import linalg as LA
 
 
 def alpha_z_eq(b, t, l, v):
@@ -11,10 +12,15 @@ def alpha_z_eq(b, t, l, v):
 def alpha_eq(b, t, l, v, z):
     return -(numpy.abs(numpy.cross(b, t)) / (z * numpy.dot(l, b) * numpy.abs((numpy.cross(v, t)))))
 
+def alpha_eq2(b, t, l, v, z):
+    return -(LA.norm(numpy.cross(b, t)) / (z * numpy.dot(l, b) * LA.norm((numpy.cross(v, t)))))
+
 
 def z_eq(b, t, l, v, a):
     return -(numpy.abs(numpy.cross(b, t)) / (a * numpy.dot(l, b) * numpy.abs((numpy.cross(v, t)))))
 
+def z_eq2(b, t, l, v, a):
+    return -(LA.norm(numpy.cross(b, t)) / (a * numpy.dot(l, b) * LA.norm((numpy.cross(v, t)))))
 
 # Get the euclidean distance between two points.
 def distance2d(p0, p1):
