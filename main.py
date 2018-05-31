@@ -33,7 +33,11 @@ def plot_init(plt, image):
 
 
 def get_ref_height(line):
+<<<<<<< HEAD:main.py
     return 106
+=======
+    return 220
+>>>>>>> 9b21af1aed2ebdbc16af36ad41ad4b49bcb566fc:abso_test.py
 
 
 def mouse_motion(event, args):
@@ -108,6 +112,7 @@ def compute(refs, unknown, vp, vl):
     print("VL:", vl)
     print("VL_:", vl_)
     alpha_vals = []
+
     for ref in refs:
         # get base, top and height coordinates of known object
         if ref[0][1] < ref[1][1]:
@@ -117,7 +122,11 @@ def compute(refs, unknown, vp, vl):
             base = ref[1]
             top = ref[0]
         height = ref[2]
+<<<<<<< HEAD:main.py
         alpha_vals.append(eq.alpha_eq(np.array(base), np.array(top), vl_/np.linalg.norm(vl_), np.array(vp), height))
+=======
+        alpha_vals.append(eq.alpha_eq2(np.array(base), np.array(top), vl_, np.array(vp), height))
+>>>>>>> 9b21af1aed2ebdbc16af36ad41ad4b49bcb566fc:abso_test.py
 
     print("Alpha vals:", alpha_vals)
     avg_alpha_val = sum(alpha_vals) / float(len(alpha_vals))
@@ -130,7 +139,11 @@ def compute(refs, unknown, vp, vl):
         base = unknown[1]
         top = unknown[0]
     # (b, t, l, v, a)
+<<<<<<< HEAD:main.py
     estimated_height = eq.z_eq(np.array(base), np.array(top), vl_/np.linalg.norm(vl_), np.array(vp), avg_alpha_val)
+=======
+    estimated_height = eq.z_eq2(np.array(base), np.array(top), vl_, np.array(vp), avg_alpha_val)
+>>>>>>> 9b21af1aed2ebdbc16af36ad41ad4b49bcb566fc:abso_test.py
     print("Estimated height:", estimated_height)
 
 
