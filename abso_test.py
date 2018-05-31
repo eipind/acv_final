@@ -95,30 +95,46 @@ def key_press(event, args):
         mouse_counter = 0
 
 
+def get_alpha(refs, unknown, vp, vl):
+
+    pass
+
+
 def compute(refs, unknown, vp, vl):
     import eqs as eq
-    vl_ = vl[0][0] - vl[1][0], vl[0][1] - vl[1][1]
+    # vl_ = vl[0][0] - vl[1][0], vl[0][1] - vl[1][1]
     # vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
-    #if vl[0][0]>vl[1][0]:
-        #vl_ = vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
-    #else:
-        #vl_ = np.cross(np.array(vl[1]), np.array(vl[0]).T)
+    if vl[0][0]>vl[1][0]:
+        vl_ = vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
+    else:
+        vl_ = np.cross(np.array(vl[1]), np.array(vl[0]).T)
+
+    get_alpha(refs, unknown, vp, vl)
     print("VL:", vl)
     print("VL_:", vl_)
     alpha_vals = []
 
     for ref in refs:
         # get base, top and height coordinates of known object
-        base = ref[0]
-        top = ref[1]
+        if ref[0][1] < ref[1][1]:
+            base = ref[0]
+            top = ref[1]
+        else:
+            base = ref[1]
+            top = ref[0]
         height = ref[2]
         alpha_vals.append(eq.alpha_eq2(np.array(base), np.array(top), vl_, np.array(vp), height))
 
     print("Alpha vals:", alpha_vals)
     avg_alpha_val = sum(alpha_vals) / float(len(alpha_vals))
     print("Average alpha val:", avg_alpha_val)
-    base = unknown[0]
-    top = unknown[1]
+
+    if unknown[0][1] < unknown[1][1]:
+        base = unknown[0]
+        top = unknown[1]
+    else:
+        base = unknown[1]
+        top = unknown[0]
     # (b, t, l, v, a)
     estimated_height = eq.z_eq2(np.array(base), np.array(top), vl_, np.array(vp), avg_alpha_val)
     print("Estimated height:", estimated_height)
