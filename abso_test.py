@@ -127,8 +127,13 @@ def compute(refs, unknown, vp, vl):
     print("Alpha vals:", alpha_vals)
     avg_alpha_val = sum(alpha_vals) / float(len(alpha_vals))
     print("Average alpha val:", avg_alpha_val)
-    base = unknown[0]
-    top = unknown[1]
+
+    if unknown[0][1] < unknown[1][1]:
+        base = unknown[0]
+        top = unknown[1]
+    else:
+        base = unknown[1]
+        top = unknown[0]
     # (b, t, l, v, a)
     estimated_height = eq.z_eq(np.array(base), np.array(top), vl_, np.array(vp), avg_alpha_val)
     print("Estimated height:", estimated_height)
