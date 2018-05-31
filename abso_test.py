@@ -96,7 +96,7 @@ def key_press(event, args):
 
 
 def get_alpha(refs, unknown, vp, vl):
-    
+
     pass
 
 
@@ -115,8 +115,12 @@ def compute(refs, unknown, vp, vl):
     alpha_vals = []
     for ref in refs:
         # get base, top and height coordinates of known object
-        base = ref[0]
-        top = ref[1]
+        if ref[0][1] < ref[1][1]:
+            base = ref[0]
+            top = ref[1]
+        else:
+            base = ref[1]
+            top = ref[0]
         height = ref[2]
         alpha_vals.append(eq.alpha_eq(np.array(base), np.array(top), vl_, np.array(vp), height))
 
