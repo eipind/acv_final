@@ -33,7 +33,7 @@ def plot_init(plt, image):
 
 
 def get_ref_height(line):
-    return 100
+    return 220
 
 
 def mouse_motion(event, args):
@@ -106,12 +106,13 @@ def compute(refs, unknown, vp, vl):
     print("VL:", vl)
     print("VL_:", vl_)
     alpha_vals = []
+
     for ref in refs:
         # get base, top and height coordinates of known object
         base = ref[0]
         top = ref[1]
         height = ref[2]
-        alpha_vals.append(eq.alpha_eq(np.array(base), np.array(top), vl_, np.array(vp), height))
+        alpha_vals.append(eq.alpha_eq2(np.array(base), np.array(top), vl_, np.array(vp), height))
 
     print("Alpha vals:", alpha_vals)
     avg_alpha_val = sum(alpha_vals) / float(len(alpha_vals))
@@ -119,7 +120,7 @@ def compute(refs, unknown, vp, vl):
     base = unknown[0]
     top = unknown[1]
     # (b, t, l, v, a)
-    estimated_height = eq.z_eq(np.array(base), np.array(top), vl_, np.array(vp), avg_alpha_val)
+    estimated_height = eq.z_eq2(np.array(base), np.array(top), vl_, np.array(vp), avg_alpha_val)
     print("Estimated height:", estimated_height)
 
 
