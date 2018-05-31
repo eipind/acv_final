@@ -1,7 +1,7 @@
 import os
 import cv2
 import sys
-import abso_shanked
+import main_util
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -33,7 +33,7 @@ def plot_init(plt, image):
 
 
 def get_ref_height(line):
-    return 100
+    return 106
 
 
 def mouse_motion(event, args):
@@ -95,21 +95,16 @@ def key_press(event, args):
         mouse_counter = 0
 
 
-def get_alpha(refs, unknown, vp, vl):
-
-    pass
-
-
 def compute(refs, unknown, vp, vl):
     import eqs as eq
-    # vl_ = vl[0][0] - vl[1][0], vl[0][1] - vl[1][1]
+    vl_ = vl[0][0] - vl[1][0], vl[0][1] - vl[1][1]
     # vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
-    if vl[0][0]>vl[1][0]:
-        vl_ = vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
-    else:
-        vl_ = np.cross(np.array(vl[1]), np.array(vl[0]).T)
+    # if vl[0][0]>vl[1][0]:
+    #     vl_ = np.cross(np.array(vl[0]), np.array(vl[1]))
+    # else:
+    #     vl_ = np.cross(np.array(vl[1]), np.array(vl[0]))
 
-    get_alpha(refs, unknown, vp, vl)
+    # get_alpha(refs, unknown, vp, vl)
     print("VL:", vl)
     print("VL_:", vl_)
     alpha_vals = []
@@ -122,7 +117,7 @@ def compute(refs, unknown, vp, vl):
             base = ref[1]
             top = ref[0]
         height = ref[2]
-        alpha_vals.append(eq.alpha_eq(np.array(base), np.array(top), vl_, np.array(vp), height))
+        alpha_vals.append(eq.alpha_eq(np.array(base), np.array(top), vl_/np.linalg.norm(vl_), np.array(vp), height))
 
     print("Alpha vals:", alpha_vals)
     avg_alpha_val = sum(alpha_vals) / float(len(alpha_vals))
@@ -135,7 +130,7 @@ def compute(refs, unknown, vp, vl):
         base = unknown[1]
         top = unknown[0]
     # (b, t, l, v, a)
-    estimated_height = eq.z_eq(np.array(base), np.array(top), vl_, np.array(vp), avg_alpha_val)
+    estimated_height = eq.z_eq(np.array(base), np.array(top), vl_/np.linalg.norm(vl_), np.array(vp), avg_alpha_val)
     print("Estimated height:", estimated_height)
 
 
@@ -241,25 +236,25 @@ for subdir, dirs, files in os.walk('./imgs'):
             print(filepath)
             image = cv2.imread(filepath)
 
-            edgelets1 = abso_shanked.compute_edgelets(image)
+            edgelets1 = main_util.compute_edges(image)
             # vis_edgelets(image, edgelets1)
-            vp1 = abso_shanked.ransac_vanishing_point(edgelets1, num_ransac_iter=5000,
-                                         threshold_inlier=5)
-            vp1 = abso_shanked.reestimate_model(vp1, edgelets1, threshold_reestimate=5)
-            abso_shanked.vis_model(image, vp1)
+            vp1 = main_util.ransac_vanishing_point(edgelets1, num_ransac_iter=5000,
+                                                   threshold_inlier=5)
+            vp1 = main_util.reestimate_model(vp1, edgelets1, threshold_reestimate=5)
+            main_util.vis_model(image, vp1)
 
-            edgelets2 = abso_shanked.remove_inliers(vp1, edgelets1, 10)
-            vp2 = abso_shanked.ransac_vanishing_point(edgelets2, num_ransac_iter=5000,
-                                         threshold_inlier=5)
-            vp2 = abso_shanked.reestimate_model(vp2, edgelets2, threshold_reestimate=5)
-
-            # vis_model(image, vp2)
+            edgelets2 = main_util.remove_inliers(vp1, edgelets1, 10)
+            vp2 = main_util.ransac_vanishing_point(edgelets2, num_ransac_iter=5000,
+                                                   threshold_inlier=5)
+            vp2 = main_util.reestimate_model(vp2, edgelets2, threshold_reestimate=5)
 
             # vis_model(image, vp2)
-            edgelets3 = abso_shanked.remove_inliers(vp2, edgelets2, 10)
-            vp3 = abso_shanked.ransac_vanishing_point(edgelets3, num_ransac_iter=5000,
-                                         threshold_inlier=5)
-            vp3 = abso_shanked.reestimate_model(vp3, edgelets3, threshold_reestimate=5)
+
+            # vis_model(image, vp2)
+            edgelets3 = main_util.remove_inliers(vp2, edgelets2, 10)
+            vp3 = main_util.ransac_vanishing_point(edgelets3, num_ransac_iter=5000,
+                                                   threshold_inlier=5)
+            vp3 = main_util.reestimate_model(vp3, edgelets3, threshold_reestimate=5)
 
             vp, vl = get_vp_and_vl([vp1, vp2, vp3])
 
